@@ -1,4 +1,4 @@
-module github.com/rojbar/sftp
+module github.com/rojbar/sftpc
 
 go 1.18
 

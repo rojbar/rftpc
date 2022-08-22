@@ -15,7 +15,9 @@ limitations under the License.
 */
 package main
 
-import "github.com/rojbar/sftpc/cmd"
+import (
+	"github.com/rojbar/sftpc/cmd"
+)
 
 func main() {
 	cmd.Execute()

@@ -5,23 +5,64 @@ Copyright © 2022 rojbar
 package cmd
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"net"
+	"os"
 
+	data "github.com/rojbar/sftpc/structs"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // sendCmd represents the send command
 var sendCmd = &cobra.Command{
 	Use:   "send",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Send a file to the specified channel in a server",
+	Long: `Send recieves the filepath, server name and channel number to send. An example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		send [filepath] [servername] [channelname]
+	`,
+	Args: cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("send called")
+
+		filePath := args[0]
+		serverName := args[1]
+		//channelName := args[2]
+		serverKey := "knownhosts." + serverName
+
+		if !viper.IsSet(serverKey) {
+			cobra.CheckErr(errors.New("Host name not found, add a host with add command"))
+		}
+
+		var server data.Server
+		errU := viper.UnmarshalKey(serverKey, &server)
+		cobra.CheckErr(errU)
+
+		file, errO := os.Open(filePath)
+		cobra.CheckErr(errO)
+
+		defer file.Close()
+
+		reader := bufio.NewReader(file)
+		conn, err := net.Dial("tcp", server.Domain+":"+server.Port)
+		cobra.CheckErr(err)
+		defer conn.Close()
+
+		writer := bufio.NewWriter(conn)
+
+		message := make([]byte, 4096)
+		bytesRead, errP := reader.Read(message)
+		cobra.CheckErr(errP)
+		bytesWritten, errW := writer.Write(message)
+		writer.Flush()
+		cobra.CheckErr(errW)
+
+		fmt.Println(bytesRead)
+		fmt.Println(bytesWritten)
+		fmt.Println(string(message))
+
 	},
 }
 

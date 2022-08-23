@@ -5,24 +5,36 @@ Copyright © 2022 rojbar
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
+	data "github.com/rojbar/sftpc/structs"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "add [domain] [port] [alias]",
+	Short: "Adds a server to the known list",
+	Long: `Adds a server to the know list of servers
+	`,
+	Args: cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
+
+		key := "knownhosts." + args[2]
+		if viper.IsSet(key) {
+			cobra.CheckErr(errors.New("Host Name already added"))
+		}
+
+		known_hosts := make(map[string]data.Server)
+		errU := viper.UnmarshalKey("knownhosts", &known_hosts)
+		cobra.CheckErr(errU)
+
+		known_hosts[args[2]] = data.Server{Domain: args[0], Port: args[1], Name: args[2]}
+		viper.Set("knownhosts", known_hosts)
+		viper.WriteConfig()
 	},
+	DisableFlagsInUseLine: true,
 }
 
 func init() {

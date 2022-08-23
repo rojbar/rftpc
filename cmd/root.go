@@ -99,5 +99,5 @@ func initConfig() {
 	} else {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
-
+	viper.WatchConfig()
 }

@@ -16,7 +16,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/rojbar/sftpc/cmd"
+	"github.com/rojbar/rftpc/cmd"
 )
 
 func main() {

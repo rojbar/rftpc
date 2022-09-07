@@ -7,7 +7,7 @@ package cmd
 import (
 	"errors"
 
-	data "github.com/rojbar/sftpc/structs"
+	data "github.com/rojbar/rftpc/structs"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

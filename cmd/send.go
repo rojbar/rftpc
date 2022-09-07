@@ -5,20 +5,17 @@ Copyright © 2022 rojbar
 package cmd
 
 import (
-	"bufio"
 	"errors"
-	"fmt"
-	"net"
-	"os"
 
-	data "github.com/rojbar/sftpc/structs"
+	data "github.com/rojbar/rftpc/structs"
+	rftpci "github.com/rojbar/rftpic"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 // sendCmd represents the send command
 var sendCmd = &cobra.Command{
-	Use:   "send",
+	Use:   "send [filepath] [servername] [channelname]",
 	Short: "Send a file to the specified channel in a server",
 	Long: `Send recieves the filepath, server name and channel number to send. An example:
 
@@ -29,40 +26,19 @@ var sendCmd = &cobra.Command{
 
 		filePath := args[0]
 		serverName := args[1]
-		//channelName := args[2]
+		channelName := args[2]
 		serverKey := "knownhosts." + serverName
 
 		if !viper.IsSet(serverKey) {
-			cobra.CheckErr(errors.New("Host name not found, add a host with add command"))
+			cobra.CheckErr(errors.New("host name not found, add a host with the add command"))
 		}
 
 		var server data.Server
 		errU := viper.UnmarshalKey(serverKey, &server)
 		cobra.CheckErr(errU)
 
-		file, errO := os.Open(filePath)
-		cobra.CheckErr(errO)
-
-		defer file.Close()
-
-		reader := bufio.NewReader(file)
-		conn, err := net.Dial("tcp", server.Domain+":"+server.Port)
-		cobra.CheckErr(err)
-		defer conn.Close()
-
-		writer := bufio.NewWriter(conn)
-
-		message := make([]byte, 4096)
-		bytesRead, errP := reader.Read(message)
-		cobra.CheckErr(errP)
-		bytesWritten, errW := writer.Write(message)
-		writer.Flush()
-		cobra.CheckErr(errW)
-
-		fmt.Println(bytesRead)
-		fmt.Println(bytesWritten)
-		fmt.Println(string(message))
-
+		errS := rftpci.SendFile(server.Port, server.Domain, channelName, filePath)
+		cobra.CheckErr(errS)
 	},
 }
 

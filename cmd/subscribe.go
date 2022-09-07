@@ -5,23 +5,36 @@ Copyright © 2022 rojbar
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
+	data "github.com/rojbar/rftpc/structs"
+	rftpci "github.com/rojbar/rftpic"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // subscribeCmd represents the subscribe command
 var subscribeCmd = &cobra.Command{
-	Use:   "subscribe",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "subscribe [server alias] [channelName]",
+	Short: "Subscribe to a channel from a server ",
+	Long: `When subscribe to a channel every file send during the connection time
+	will be store in $HOME/documents/sftp/{serverName}/{channelName}`,
+	Args: cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("subscribe called")
+		serverName := args[0]
+		channelName := args[1]
+		serverKey := "knownhosts." + serverName
+
+		if !viper.IsSet(serverKey) {
+			cobra.CheckErr(errors.New("host name not found, add a host with the add command"))
+		}
+
+		var server data.Server
+		errU := viper.UnmarshalKey(serverKey, &server)
+		cobra.CheckErr(errU)
+
+		errS := rftpci.Subscribe(server.Port, server.Domain, channelName)
+		cobra.CheckErr(errS)
 	},
 }
 

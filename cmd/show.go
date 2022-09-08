@@ -7,7 +7,9 @@ package cmd
 import (
 	"fmt"
 
+	data "github.com/rojbar/rftpc/structs"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // showCmd represents the show command
@@ -17,7 +19,14 @@ var showCmd = &cobra.Command{
 	Long:                  `Shows the list of known servers`,
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("show called")
+
+		known_hosts := make(map[string]data.Server)
+		errU := viper.UnmarshalKey("knownhosts", &known_hosts)
+		cobra.CheckErr(errU)
+
+		for _, element := range known_hosts {
+			fmt.Println("Alias:", element.Name, "\t", "Domain:", element.Domain, "\t", "Port:", element.Port, "\t")
+		}
 	},
 }
 

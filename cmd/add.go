@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	data "github.com/rojbar/rftpc/structs"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var addCmd = &cobra.Command{
 
 		key := "knownhosts." + args[2]
 		if viper.IsSet(key) {
-			cobra.CheckErr(errors.New("host name already added"))
+			cobra.CheckErr(errors.New("server alias already added"))
 		}
 
 		known_hosts := make(map[string]data.Server)
@@ -31,7 +32,10 @@ var addCmd = &cobra.Command{
 
 		known_hosts[args[2]] = data.Server{Domain: args[0], Port: args[1], Name: args[2]}
 		viper.Set("knownhosts", known_hosts)
-		viper.WriteConfig()
+		errWrite := viper.WriteConfig()
+		cobra.CheckErr(errWrite)
+
+		fmt.Println("server added successfully")
 	},
 	DisableFlagsInUseLine: true,
 }

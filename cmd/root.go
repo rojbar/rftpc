@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -96,8 +95,9 @@ func initConfig() {
 			errR := errors.New("couldn't find config file")
 			cobra.CheckErr(errR)
 		}
-	} else {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+	// else {
+	// 	fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	// }
 	viper.WatchConfig()
 }

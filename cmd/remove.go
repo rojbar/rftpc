@@ -5,9 +5,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
+	data "github.com/rojbar/rftpc/structs"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // removeCmd represents the remove command
@@ -20,7 +23,22 @@ var removeCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+
+		key := "knownhosts." + args[0]
+		if !viper.IsSet(key) {
+			cobra.CheckErr(errors.New("server alias not found"))
+		}
+
+		known_hosts := make(map[string]data.Server)
+		errU := viper.UnmarshalKey("knownhosts", &known_hosts)
+		cobra.CheckErr(errU)
+
+		delete(known_hosts, args[0])
+		viper.Set("knownhosts", known_hosts)
+		errWrite := viper.WriteConfig()
+		cobra.CheckErr(errWrite)
+
+		fmt.Println("server removed successfully")
 	},
 }
 

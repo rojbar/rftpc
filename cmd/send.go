@@ -21,7 +21,8 @@ var sendCmd = &cobra.Command{
 
 		send [filepath] [servername] [channelname]
 	`,
-	Args: cobra.ExactArgs(3),
+	Args:                  cobra.ExactArgs(3),
+	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		filePath := args[0]

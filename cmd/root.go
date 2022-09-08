@@ -29,9 +29,9 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sftp [command]",
-	Short: "simple file transfer custom protocol",
-	Long:  `sftp custmo protocol`,
+	Use:   "rftpc [command]",
+	Short: "rojbar file transfer protocol : client",
+	Long:  `rojbar file transfer protocol : client`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -53,7 +53,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sftp/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rftp/config.yaml)")
 
 }
 
@@ -67,7 +67,7 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		configDir := filepath.Join(home, ".sftp")
+		configDir := filepath.Join(home, ".rftpc")
 		errMkDir := os.MkdirAll(configDir, os.ModePerm)
 		cobra.CheckErr(errMkDir)
 		// Search config in home directory with name ".sftp" (without extension).
@@ -85,7 +85,7 @@ func initConfig() {
 			home, err := os.UserHomeDir()
 			cobra.CheckErr(err)
 
-			configDir := filepath.Join(home, ".sftp")
+			configDir := filepath.Join(home, ".rftpc")
 
 			_, errMkFile := os.Create(filepath.Join(configDir, "config.yaml"))
 			cobra.CheckErr(errMkFile)
@@ -93,7 +93,7 @@ func initConfig() {
 			errW := viper.WriteConfig()
 			cobra.CheckErr(errW)
 		} else {
-			errR := errors.New("Culdn't find config file")
+			errR := errors.New("couldn't find config file")
 			cobra.CheckErr(errR)
 		}
 	} else {

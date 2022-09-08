@@ -12,14 +12,13 @@ import (
 
 // unsubscribeCmd represents the unsubscribe command
 var unsubscribeCmd = &cobra.Command{
-	Use:   "unsubscribe",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "unsubscribe [servername] [channelname]",
+	Short: "Unsubscribes from a current server",
+	Long: `Unsubscribes from a current server
+		unsubscribe [servername] [channelname]
+	`,
+	DisableFlagsInUseLine: true,
+	Args:                  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("unsubscribe called")
 	},

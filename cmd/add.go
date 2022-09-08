@@ -16,14 +16,13 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add [domain] [port] [alias]",
 	Short: "Adds a server to the known list",
-	Long: `Adds a server to the know list of servers
-	`,
-	Args: cobra.ExactArgs(3),
+	Long:  `Adds a server to the know list of servers`,
+	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
 
 		key := "knownhosts." + args[2]
 		if viper.IsSet(key) {
-			cobra.CheckErr(errors.New("Host Name already added"))
+			cobra.CheckErr(errors.New("host name already added"))
 		}
 
 		known_hosts := make(map[string]data.Server)

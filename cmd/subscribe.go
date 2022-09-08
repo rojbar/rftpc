@@ -15,11 +15,11 @@ import (
 
 // subscribeCmd represents the subscribe command
 var subscribeCmd = &cobra.Command{
-	Use:   "subscribe [server alias] [channelName]",
-	Short: "Subscribe to a channel from a server ",
-	Long: `When subscribe to a channel every file send during the connection time
-	will be store in $HOME/documents/sftp/{serverName}/{channelName}`,
-	Args: cobra.ExactArgs(2),
+	Use:                   "subscribe [server alias] [channelName]",
+	Short:                 "Subscribe to a channel from a server",
+	Long:                  `Subscribe to a channel from a server`,
+	DisableFlagsInUseLine: true,
+	Args:                  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		serverName := args[0]
 		channelName := args[1]
